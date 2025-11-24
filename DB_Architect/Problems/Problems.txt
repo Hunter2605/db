@@ -1,9 +1,7 @@
-Optimization problems:Задача 1: Скорость Аналитического Запроса
-Суть: Обеспечить высокую производительность при расчете коэффициента оттока по длительным атрибутам (например, Payment_Method). Запрос, объединяющий Customers, Contract_Details и Customer_Services, должен выполняться быстро (менее 100 мс).
+Problem 1: The company does not fully understand why customers leave. Churn may be influenced by contract type, service quality, missing features, or high monthly charges.
 
-Решение (Инструмент): Создание индекса на Payment_Method в таблице Contract_Details и комплексного индекса на (Contract_ID, Churn_Status) в таблице Customers.
+Problem 2: The business cannot easily identify which customer groups are most at risk and require retention efforts.
 
-Задача 2: Целостность Данных и Расширяемость
-Суть: Гарантировать, что ни один клиент не может быть занесен в систему без корректно заполненных демографических или контрактных данных. Это также обеспечит, что добавление нового типа оплаты не сломает систему.
+Problem 3: It is unclear which combinations of services contribute to customer loyalty and which do not.
 
-Решение (Инструмент): Строгое использование внешних ключей (Foreign Keys) между Customers и Contract_Details, а также между Customers и Demographics, с ограничением NOT NULL для FK-полей в таблице Customers.
+Problem 4: Some customers have inconsistent billing values (e.g., high tenure but very low TotalCharges), suggesting errors or payment issues that may cause dissatisfaction and churn.
