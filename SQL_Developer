@@ -1,0 +1,219 @@
+CREATE DATABASE IF NOT EXISTS telco_churn
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE telco_churn;
+
+CREATE TABLE Customers (
+    customerID     VARCHAR(20) NOT NULL PRIMARY KEY,
+    gender         VARCHAR(10) NOT NULL,
+    SeniorCitizen  INT         NOT NULL DEFAULT 0,
+    Partner        VARCHAR(5)  NOT NULL,
+    Dependents     VARCHAR(5)  NOT NULL,
+    tenure         INT         NOT NULL DEFAULT 0
+);
+
+CREATE TABLE PhoneService (
+    customerID     VARCHAR(20) NOT NULL PRIMARY KEY,
+    PhoneService   VARCHAR(20) NOT NULL,
+    MultipleLines  VARCHAR(30) NOT NULL,
+    CONSTRAINT fk_phoneservice_customer
+        FOREIGN KEY (customerID)
+        REFERENCES Customers(customerID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE InternetService (
+    customerID        VARCHAR(20) NOT NULL PRIMARY KEY,
+    InternetService   VARCHAR(30) NOT NULL,
+    OnlineSecurity    VARCHAR(30) NOT NULL,
+    OnlineBackup      VARCHAR(30) NOT NULL,
+    DeviceProtection  VARCHAR(30) NOT NULL,
+    TechSupport       VARCHAR(30) NOT NULL,
+    StreamingTV       VARCHAR(30) NOT NULL,
+    StreamingMovies   VARCHAR(30) NOT NULL,
+    CONSTRAINT fk_internetservice_customer
+        FOREIGN KEY (customerID)
+        REFERENCES Customers(customerID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Contract (
+    customerID       VARCHAR(20) NOT NULL PRIMARY KEY,
+    Contract         VARCHAR(30) NOT NULL,
+    PaperlessBilling VARCHAR(5)  NOT NULL,
+    CONSTRAINT fk_contract_customer
+        FOREIGN KEY (customerID)
+        REFERENCES Customers(customerID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Payment (
+    customerID      VARCHAR(20)   NOT NULL PRIMARY KEY,
+    PaymentMethod   VARCHAR(50)   NOT NULL,
+    MonthlyCharges  DECIMAL(10,2) NOT NULL,
+    TotalCharges    DECIMAL(10,2) NULL,
+    CONSTRAINT fk_payment_customer
+        FOREIGN KEY (customerID)
+        REFERENCES Customers(customerID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Churn (
+    customerID  VARCHAR(20) NOT NULL PRIMARY KEY,
+    Churn       VARCHAR(5)  NOT NULL,
+    CONSTRAINT fk_churn_customer
+        FOREIGN KEY (customerID)
+        REFERENCES Customers(customerID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+CREATE INDEX idx_customers_gender ON Customers(gender);
+CREATE INDEX idx_customers_senior ON Customers(SeniorCitizen);
+CREATE INDEX idx_customers_tenure ON Customers(tenure);
+
+CREATE INDEX idx_contract_type ON Contract(Contract);
+CREATE INDEX idx_contract_paperless ON Contract(PaperlessBilling);
+
+CREATE INDEX idx_payment_method ON Payment(PaymentMethod);
+CREATE INDEX idx_payment_monthly ON Payment(MonthlyCharges);
+
+CREATE INDEX idx_internet_service ON InternetService(InternetService);
+
+CREATE INDEX idx_churn_flag ON Churn(Churn);
+USE telco_churn;
+SHOW TABLES;
+SET GLOBAL local_infile = 1;
+USE telco_churn;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/customers.csv'
+INTO TABLE Customers
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/phoneservice.csv'
+INTO TABLE PhoneService
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/internetservice.csv'
+INTO TABLE InternetService
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/contract.csv'
+INTO TABLE Contract
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/payment.csv'
+INTO TABLE Payment
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/churn.csv'
+INTO TABLE Churn
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+SELECT COUNT(*) FROM Customers;
+SELECT COUNT(*) FROM PhoneService;
+SELECT COUNT(*) FROM InternetService;
+SELECT COUNT(*) FROM Contract;
+SELECT COUNT(*) FROM Payment;
+SELECT COUNT(*) FROM Churn;
+
+USE telco_churn;
+
+CREATE VIEW v_churn_by_contract AS
+SELECT c.Contract,
+       COUNT(*) AS total_customers,
+       SUM(ch.Churn = 'Yes') AS churned,
+       ROUND(100 * SUM(ch.Churn = 'Yes') / COUNT(*), 2) AS churn_rate
+FROM Contract c
+JOIN Churn ch ON c.customerID = ch.customerID
+GROUP BY c.Contract;
+
+CREATE VIEW v_revenue_by_internet_service AS
+SELECT i.InternetService,
+       SUM(p.MonthlyCharges) AS total_revenue,
+       ROUND(AVG(p.MonthlyCharges), 2) AS avg_monthly_charge
+FROM InternetService i
+JOIN Payment p ON i.customerID = p.customerID
+GROUP BY i.InternetService;
+
+CREATE VIEW v_churn_by_tenure_bucket AS
+SELECT FLOOR(c.tenure / 12) AS years_bucket,
+       COUNT(*) AS total_customers,
+       SUM(ch.Churn = 'Yes') AS churned,
+       ROUND(100 * SUM(ch.Churn = 'Yes') / COUNT(*), 2) AS churn_rate
+FROM Customers c
+JOIN Churn ch ON c.customerID = ch.customerID
+GROUP BY FLOOR(c.tenure / 12)
+ORDER BY years_bucket;
+
+SHOW TABLES;
+
+DESCRIBE Customers;
+
+SHOW CREATE TABLE PhoneService;
+
+SHOW INDEX FROM Customers;
+
+SHOW INDEX FROM Payment;
+
+SELECT * FROM PhoneService LIMIT 20;
+SELECT * FROM InternetService LIMIT 20;
+SELECT * FROM Contract LIMIT 20;
+SELECT * FROM Payment LIMIT 20;
+SELECT * FROM Churn LIMIT 20;
+
+SELECT COUNT(*) FROM Customers;
+SELECT COUNT(*) FROM PhoneService;
+SELECT COUNT(*) FROM InternetService;
+SELECT COUNT(*) FROM Contract;
+SELECT COUNT(*) FROM Payment;
+SELECT COUNT(*) FROM Churn;
+
+EXPLAIN
+SELECT *
+FROM Customers
+WHERE gender = 'Male';
+
+EXPLAIN
+SELECT *
+FROM Customers
+WHERE tenure BETWEEN 12 AND 24;
+
+EXPLAIN
+SELECT Contract, COUNT(*)
+FROM Contract
+GROUP BY Contract;
+
+EXPLAIN
+SELECT *
+FROM Payment
+WHERE PaymentMethod = 'Credit card';
+
+EXPLAIN
+SELECT *
+FROM Payment
+WHERE MonthlyCharges > 80;
+
+
