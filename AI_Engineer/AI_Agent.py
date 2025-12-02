@@ -17,22 +17,18 @@ os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 def main():
     try:
         # 2. CONNECT TO MYSQL DATABASE
-        # We use SQLAlchemy format: mysql+mysqlconnector://user:pass@host/db_name
         db_uri = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
         db = SQLDatabase.from_uri(db_uri)
         
         print("Successfully connected to the database.")
 
         # 3. INITIALIZE GEMINI LLM
-        # using 'gemini-1.5-flash' for speed/cost, or 'gemini-1.5-pro' for reasoning
         llm = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash",
-            temperature=0  # 0 is best for code/SQL generation to reduce hallucinations
+            temperature=0  
         )
 
-        # 4. CREATE THE SQL AGENT
-        # The agent_type="openai-tools" or "tool-calling" is standard, 
-        # but LangChain handles the default agent setup automatically here.
+        # 4. CREATE THE SQL AGENT   
         agent_executor = create_sql_agent(
             llm=llm,
             db=db,
