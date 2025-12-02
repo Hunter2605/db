@@ -1,7 +1,9 @@
-Problem 1: The company does not fully understand why customers leave. Churn may be influenced by contract type, service quality, missing features, or high monthly charges.
+Problem 1: Churn prediction. Predict customer churn and prioritize retention.
 
-Problem 2: The business cannot easily identify which customer groups are most at risk and require retention efforts.
+Problem 2:  Identify the factors that causes high price.
+It's important to understand why customers are overpaying, which services are contributing to this, and which customer groups require rate optimization.
 
-Problem 3: It is unclear which combinations of services contribute to customer loyalty and which do not.
+Problem 3: Different payment methods have varying levels of reliability.
+It's important to identify which methods lead to delays, non-payments, and churn, while others are more reliable.
 
-Problem 4: Some customers have inconsistent billing values (e.g., high tenure but very low TotalCharges), suggesting errors or payment issues that may cause dissatisfaction and churn.
+Problem 4: Optimize contracts and payment channels. Identify which contract types and payment methods generate the least churn to adjust marketing and discount policies.
