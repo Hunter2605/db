@@ -1,0 +1,13 @@
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/customers_v2.csv'
+INTO TABLE Customers
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'C:/Users/t1402/telco_project/servicedetails_v2.csv'
+INTO TABLE ServiceDetails
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
