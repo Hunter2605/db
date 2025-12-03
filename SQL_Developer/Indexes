@@ -1,0 +1,14 @@
+CREATE INDEX idx_customers_gender ON Customers(gender);
+CREATE INDEX idx_customers_senior ON Customers(SeniorCitizen);
+CREATE INDEX idx_customers_tenure ON Customers(tenure);
+CREATE INDEX idx_customers_churn ON Customers(Churn);
+CREATE INDEX idx_customers_contract ON Customers(ContractID);
+CREATE INDEX idx_customers_payment_method ON Customers(PaymentMethodID);
+
+CREATE INDEX idx_services_internet ON ServiceDetails(InternetServiceID);
+CREATE INDEX idx_services_phone ON ServiceDetails(PhoneService);
+CREATE INDEX idx_services_streamingtv ON ServiceDetails(StreamingTV);
+
+CREATE INDEX idx_contracts_type ON Contracts(Type);
+CREATE INDEX idx_paymentmethods_type ON PaymentMethods(Type);
+CREATE INDEX idx_internetservices_type ON InternetServices(Type);
