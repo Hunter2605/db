@@ -12,3 +12,19 @@ CREATE INDEX idx_services_streamingtv ON ServiceDetails(StreamingTV);
 CREATE INDEX idx_contracts_type ON Contracts(Type);
 CREATE INDEX idx_paymentmethods_type ON PaymentMethods(Type);
 CREATE INDEX idx_internetservices_type ON InternetServices(Type);
+
+## Customers
+Индекс	Для чего используется
+PRIMARY (customerID)	        JOIN Customers ↔ ServiceDetails
+idx_customers_gender	        Фильтрация по полу
+idx_customers_senior	        Поиск пенсионеров
+idx_customers_tenure	        Аналитика по стажу
+idx_customers_churn	          Основной фильтр по оттоку
+idx_customers_contract	      JOIN с Contracts
+idx_customers_payment_method	JOIN с PaymentMethods
+## ServiceDetails
+Индекс	Для чего
+PRIMARY (customerID)	        JOIN Customers
+idx_services_internet	        JOIN с InternetServices
+idx_services_phone	          Фильтр PhoneService
+idx_services_streamingtv	    Фильтр StreamingTV
